@@ -9,8 +9,7 @@ prisoners_free = False
 civilian_healed = False
 
 actions = ["Attack", "Magic", "Item"]
-room_actions = ["Move", "Search", "Item", "Wait"]
-
+room_actions = ["Move", "Search", "Item", "Wait", "Save"]
 total_points = 0
 
 format_string_center = '{string:^43}'

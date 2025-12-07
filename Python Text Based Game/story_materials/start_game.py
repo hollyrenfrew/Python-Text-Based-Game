@@ -8,13 +8,23 @@ from screens.game_over import player_initialize
 from story_materials.enter_room import enter_room
 from databases.characters import player
 from functions.list_to_string import list_to_string
+from databases.game_state import import_state
 
 audio1 = "music/tower_defense.mp3"
 audio2 = "music/move_it_out.mp3"
 audio3 = "music/our_mountain.mp3"
 
-def start_game():
+def start_game(loaded_state=None):
     print_fast("Starting game....\n")
+    if loaded_state is not None:
+        import_state(loaded_state)
+        pygame.mixer.music.fadeout(3000)
+        pygame.mixer.music.load(audio1)
+        pygame.mixer.music.play(-1, 0, 3000)
+        time.sleep(2)
+
+        enter_room()
+        return
     character_creation()
     opening_letter()
     player_information.current_room = entry_hall

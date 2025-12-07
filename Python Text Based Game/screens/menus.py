@@ -1,7 +1,10 @@
 import sys
 import pygame
+import time
+import json
 from functions import print_speed
 from functions.print_speed import *
+from save_system import init_db, list_saves_by_name, get_save_by_name
 
 format_string = '╎ {string:^48} ╎'
 format_options = '{string:^52}'
@@ -14,42 +17,114 @@ audio3 = "music/our_mountain.mp3"
 
 def title():
     from story_materials.start_game import start_game
+
+    # Ensure DB exists at startup
+    init_db()
+
     # Music setup
     pygame.mixer.init()
     pygame.mixer.music.load(audio1)
     pygame.mixer.music.play(-1, 0, 3000)
     time.sleep(2)
-    print(top_border)
-    print_fast(format_string.format(string="Welcome to Heroes and Villains"))
-    print_fast(format_string.format(string="Holly Renfrew's Final IT-140 Project"))
-    print(bottom_border)
-    print_fast(format_options.format(string="▶ Play ◀"))
-    print_fast(format_options.format(string="▶ About ◀"))
-    print_fast(format_options.format(string="▶ Settings ◀"))
-    print_fast(format_options.format(string="▶ Quit ◀"))
 
+    while True:
+        print(top_border)
+        print_fast(format_string.format(string="Welcome to Heroes and Villains"))
+        print_fast(format_string.format(string="Holly Renfrew's Final IT-140 Project"))
+        print(bottom_border)
+        print_fast(format_options.format(string="▶ Play ◀"))
+        print_fast(format_options.format(string="▶ Continue ◀"))
+        print_fast(format_options.format(string="▶ About ◀"))
+        print_fast(format_options.format(string="▶ Settings ◀"))
+        print_fast(format_options.format(string="▶ Quit ◀"))
 
-    option = input("> ")
+        option = input("> ").lower().strip()
 
-    if option.lower().strip() == "play":
-        start_game()
-    elif option.lower().strip() == "about":
-        about()
-    elif option.lower().strip() == "settings":
-        settings()
-    elif option.lower().strip() == "quit":
-        sys.exit()
-    while option.lower() not in ["play", "about", "settings", "quit"]:
-        print("Invalid command, please try again.")
-        option = input("> ")
-        if option.lower() == "play":
-            start_game()
-        elif option.lower().strip() == "about":
+        if option == "play":
+            start_game()  # new game
+        elif option == "continue":
+            continue_game_menu(start_game)
+        elif option == "about":
             about()
-        elif option.lower().strip() == "settings":
+        elif option == "settings":
             settings()
-        elif option.lower() == "quit":
+        elif option == "quit":
             sys.exit()
+        else:
+            print("Invalid command, please try again.")
+
+
+
+def continue_game_menu(start_game_func):
+    print(top_border)
+    print_fast(format_string.format(string="Continue Game"))
+    print(bottom_border)
+
+    # List unique save names with last saved time
+    rows = list_saves_by_name()
+    if not rows:
+        time.sleep(1)
+        return  # back to title loop
+
+    print_fast(format_options.format(string="Enter a save name to load,"))
+    print_fast(format_options.format(string="or type 'Back' to return."))
+
+    while True:
+        name = input("> ").strip()
+        if not name:
+            continue
+
+        if name.lower() == "back":
+            return  # back to title loop
+
+        slot = get_save_by_name(name)
+        if slot is None:
+            print_fast(format_string.format(
+                string=f"No save slot named '{name}'. Try again or type 'Back'."
+            ))
+            continue
+
+        save_id, save_name, created_at, data_json = slot
+
+        # Show a small preview before loading
+        try:
+            state = json.loads(data_json)
+        except json.JSONDecodeError:
+            print_fast(format_string.format(
+                string="Error reading save data. Cannot load this slot."
+            ))
+            time.sleep(1)
+            return
+
+        p = state.get("player", {})
+        pi = state.get("player_info", {})
+        room_name = pi.get("current_room", "Unknown")
+        hp = p.get("hp", "?")
+        max_hp = p.get("max_hp", "?")
+        points = pi.get("total_points", "?")
+
+        print_fast(format_string.format(string=f"Loading '{save_name}' ({created_at})"))
+        print_fast(format_string.format(string=f"Room: {room_name}"))
+        print_fast(format_string.format(string=f"HP: {hp}/{max_hp}"))
+        print_fast(format_string.format(string=f"Points: {points}"))
+        print_fast(format_string.format(string=""))
+        print_fast(format_string.format(string="Is this the save you want to load? (Yes / No)"))
+
+        confirm = input("> ").strip().lower()
+        while confirm not in ["yes", "no"]:
+            print_fast(format_string.format(string="Please enter Yes or No."))
+            confirm = input("> ").strip().lower()
+
+        if confirm == "no":
+            print_fast(format_string.format(string="Okay, choose another save name or type 'Back'."))
+            continue
+
+        # At this point, we load the game
+        # Either let start_game handle import_state(state),
+        # or do it here and call start_game_func(loaded_state=None).
+        start_game_func(loaded_state=state)
+        # When game returns, we go back to title (the while loop in title())
+        return
 
 
 def about():
