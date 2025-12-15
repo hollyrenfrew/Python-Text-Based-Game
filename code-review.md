@@ -1,8 +1,8 @@
-\# Code Review – Python RPG
+# Code Review – Python RPG
 
 
 
-\## Introduction
+## Introduction
 
 
 
@@ -18,11 +18,11 @@ This makes it a perfect candidate for demonstrating database skills, especially 
 
 
 
-\## Existing Code Functionality
+## Existing Code Functionality
 
 
 
-The Heroes \& Villains game is a Python-based command-line adventure where the player moves between rooms, fights enemies, interacts with items, and advances the storyline.
+The Heroes & Villains game is a Python-based command-line adventure where the player moves between rooms, fights enemies, interacts with items, and advances the storyline.
 
 
 
@@ -30,11 +30,11 @@ At the moment, the game handles all its information in Python files inside folde
 
 
 
-\- databases/player\_information.py
+- databases/player_information.py
 
-\- databases/rooms.py
+- databases/rooms.py
 
-\- story\_materials/\\\*.py
+- story_materials/*.py
 
 
 
@@ -46,45 +46,45 @@ Currently, the game includes:
 
 
 
-\- Player stats stored in memory (health, attack, boons/banes, etc.)
+- Player stats stored in memory (health, attack, boons/banes, etc.)
 
 
 
 
 
-\_characters.py\_
+_characters.py_
 
 
 
-\- Room definitions stored in Python dictionaries include enemies, descriptions, and special interactions. It also stores the directions one can move in each room.
+- Room definitions stored in Python dictionaries include enemies, descriptions, and special interactions. It also stores the directions one can move in each room.
 
 
 
-\_rooms.py\_
+_rooms.py_
 
 
 
-\_characters.py\_
+_characters.py_
 
 
 
-\- Movement system allowing the player to type commands like \_North, South, East, West\_.
-
-
-
-
-
-\_battle\_flow.py\_
-
-
-
-\- No persistent saving or loading. Every run is a fresh start. Currently this information is stored in playerinformation.py, telling the game what has been done and what hasn't been done yet. An example one can see is the current\_room, current\_weapons and current\_items shown below:
+- Movement system allowing the player to type commands like _North, South, East, West_.
 
 
 
 
 
-\_player\_information.py\_
+_battle_flow.py_
+
+
+
+- No persistent saving or loading. Every run is a fresh start. Currently this information is stored in playerinformation.py, telling the game what has been done and what hasn't been done yet. An example one can see is the current_room, current_weapons and current_items shown below:
+
+
+
+
+
+_player_information.py_
 
 
 
@@ -92,11 +92,11 @@ It also shows if one has freed the prisoners in a special room, or healed some c
 
 
 
-\## Code Review Analysis
+## Code Review Analysis
 
 
 
-\### Structure
+### Structure
 
 
 
@@ -110,7 +110,7 @@ However, all persistent data is embedded directly in Python files:
 
 
 
-\_rooms.py\_
+_rooms.py_
 
 
 
@@ -118,7 +118,7 @@ This makes the game difficult to expand. Adding new rooms, items, or player clas
 
 
 
-\### Documentation
+### Documentation
 
 
 
@@ -126,15 +126,15 @@ Most functions are readable, but there are few docstrings. For example, the comb
 
 
 
-\_enter\_room.py\_
+_enter_room.py_
 
 
 
-This enter\_room() function is long but undocumented.
+This enter_room() function is long but undocumented.
 
 
 
-\### Variables
+### Variables
 
 
 
@@ -142,31 +142,31 @@ Variables are named descriptively and consistently, but there are two database-r
 
 
 
-\- Player stats and room data are stored in non-persistent dictionaries which cannot be saved across sessions.
+- Player stats and room data are stored in non-persistent dictionaries which cannot be saved across sessions.
 
-\- The game loads every "database" file at runtime meaning data isn't validated, normalized, or stored efficiently.
-
-
+- The game loads every "database" file at runtime meaning data isn't validated, normalized, or stored efficiently.
 
 
 
-\_player\_information.py\_
+
+
+_player_information.py_
 
 
 
-\### Loops and Branches
+### Loops and Branches
 
 
 
-Control flow is clear and functional, but several branches would benefit from early returns for readability. Additionally, functions like enter\_room() handle both description printing and battle logic, which could be separated for clarity, especially once persistent room states exist.
+Control flow is clear and functional, but several branches would benefit from early returns for readability. Additionally, functions like enter_room() handle both description printing and battle logic, which could be separated for clarity, especially once persistent room states exist.
 
 
 
-\_enter\_room.py\_
+_enter_room.py_
 
 
 
-\### Defensive Programming
+### Defensive Programming
 
 
 
@@ -178,7 +178,7 @@ Problems include:
 
 
 
-\- Data resets every run
+- Data resets every run
 
 
 
@@ -186,7 +186,7 @@ If the player quits after beating three bosses, all progress is wiped.
 
 
 
-\- No input sanitization for player name or character creation
+- No input sanitization for player name or character creation
 
 
 
@@ -194,7 +194,7 @@ In a database environment, unsanitized input could cause injection or malformed 
 
 
 
-\- Hard-coded data means typo-based bugs
+- Hard-coded data means typo-based bugs
 
 
 
@@ -202,7 +202,7 @@ If a room name is misspelled in one file, the game crashes or becomes unreachabl
 
 
 
-\- No database schema
+- No database schema
 
 
 
@@ -210,7 +210,7 @@ All structures are loose dictionaries with no constraints.
 
 
 
-\### Target Areas for Improvement
+### Target Areas for Improvement
 
 
 
@@ -218,7 +218,7 @@ Here are the main areas where the game can be strengthened:
 
 
 
-\- Convert the in-memory structures into an SQL database:
+- Convert the in-memory structures into an SQL database:
 
 &nbsp; - Rooms table
 
@@ -228,25 +228,25 @@ Here are the main areas where the game can be strengthened:
 
 &nbsp; - Enemies table
 
-\- Add persistent save and load functionality:
+- Add persistent save and load functionality:
 
-\- Let players quit and resume.
+- Let players quit and resume.
 
-\- Normalize player data:
+- Normalize player data:
 
 &nbsp; - Keep stats consistent between sessions.
 
-\- Add database validation:
+- Add database validation:
 
 &nbsp; - Ensure rooms, stats, and items follow consistent schema rules.
 
-\- Separate business logic from data access:
+- Separate business logic from data access:
 
-&nbsp; - Introduce a database\_service.py that handles all SQL queries.
+&nbsp; - Introduce a database_service.py that handles all SQL queries.
 
 
 
-\### Planned Enhancements
+### Planned Enhancements
 
 
 
@@ -254,7 +254,7 @@ Here is what I plan to implement:
 
 
 
-\- Introduce SQLite as the main database:
+- Introduce SQLite as the main database:
 
 
 
@@ -266,7 +266,7 @@ The game will create SQL tables on first run and then populate them.
 
 
 
-\- Convert dictionaries into database tables
+- Convert dictionaries into database tables
 
 
 
@@ -274,7 +274,7 @@ Examples:
 
 
 
-\- rooms table with:
+- rooms table with:
 
 &nbsp; - id
 
@@ -284,9 +284,9 @@ Examples:
 
 &nbsp; - exits
 
-&nbsp; - special\_flags
+&nbsp; - special_flags
 
-\- player table with:
+- player table with:
 
 &nbsp; - name
 
@@ -298,17 +298,17 @@ Examples:
 
 &nbsp; - location
 
-\- enemies table with:
+- enemies table with:
 
 &nbsp; - name
 
 &nbsp; - stats
 
-&nbsp; - room\_id
+&nbsp; - room_id
 
 
 
-\- Save/load game system:
+- Save/load game system:
 
 
 
@@ -316,15 +316,15 @@ Players can:
 
 
 
-\- Start new game
+- Start new game
 
-\- Continue last save
+- Continue last save
 
-\- Load multiple save slots
+- Load multiple save slots
 
 
 
-\- Create a data access layer:
+- Create a data access layer:
 
 
 
@@ -332,19 +332,19 @@ Replace direct file imports with calls like:
 
 
 
-db.get\_player()
+db.get_player()
 
 
 
-db.update\_player\_location(new\_room)
+db.update_player_location(new_room)
 
 
 
-db.get\_room(room\_id)
+db.get_room(room_id)
 
 
 
-\- Input sanitization
+- Input sanitization
 
 
 
@@ -352,7 +352,7 @@ Sanitize all user inputs before writing to the database.
 
 
 
-\- Improve documentation
+- Improve documentation
 
 
 
@@ -360,7 +360,7 @@ Add docstrings to describe behavior, return values, and data interactions.
 
 
 
-\### Skills Demonstrated
+### Skills Demonstrated
 
 
 
@@ -368,21 +368,21 @@ By enhancing this artifact, I will demonstrate:
 
 
 
-\- Database integration: designing schema and implementing SQL CRUD operations
+- Database integration: designing schema and implementing SQL CRUD operations
 
-\- Data Modeling: organizing player and room data relationally
+- Data Modeling: organizing player and room data relationally
 
-\- Persistent storage implementation: enabling save/load
+- Persistent storage implementation: enabling save/load
 
-\- Refactoring legacy code: separating logic from data
+- Refactoring legacy code: separating logic from data
 
-\- Input validation and sanitization: improving safety and reliability
+- Input validation and sanitization: improving safety and reliability
 
-\- Documentation improvements: making complex systems easier to maintain
+- Documentation improvements: making complex systems easier to maintain
 
 
 
-\### Alignment with Course Outcomes
+### Alignment with Course Outcomes
 
 
 
@@ -390,7 +390,7 @@ This enhancement aligns with the following:
 
 
 
-\- \*\*Outcome 4\*\*
+- **Outcome 4**
 
 
 
@@ -398,7 +398,7 @@ Use well-founded and innovative techniques, skills, and tools in computing pract
 
 
 
-\- \*\*Outcome 5\*\*
+- **Outcome 5**
 
 
 
@@ -406,7 +406,7 @@ Develop a security mindset that anticipates exploits, which is especially import
 
 
 
-\- \*\*Outcome 3\*\*
+- **Outcome 3**
 
 
 
@@ -414,11 +414,11 @@ Design and evaluate computing solutions using CS principles, specifically, desig
 
 
 
-\## Conclusion
+## Conclusion
 
 
 
-To wrap up, my Python Heroes \& Villains adventure game is a strong early artifact that demonstrates branching logic, modular design, and interactive storytelling. However, it currently lacks any persistent data handling, which limits both gameplay depth and scalability.
+To wrap up, my Python Heroes & Villains adventure game is a strong early artifact that demonstrates branching logic, modular design, and interactive storytelling. However, it currently lacks any persistent data handling, which limits both gameplay depth and scalability.
 
 
 
