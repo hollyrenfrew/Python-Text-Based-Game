@@ -1,26 +1,26 @@
-\# Code Review – Python RPG
+# Code Review – Python RPG
 
 
 
-\## Structure
+## Structure
 
 The project is modular, but all persistent data is embedded directly in Python files.
 
 
 
-\## Key Issues
+## Key Issues
 
-\- No database
+- No database
 
-\- No persistence
+- No persistence
 
-\- Hard-coded room and player data
+- Hard-coded room and player data
 
-\- No input sanitization
+- No input sanitization
 
 
 
-\## Opportunity
+## Opportunity
 
 Introducing SQLite allows the project to scale, persist data, and follow professional software practices.
 
