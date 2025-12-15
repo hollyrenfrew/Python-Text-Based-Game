@@ -1,26 +1,26 @@
-\# Enhancement Plan – Databases
+# Enhancement Plan – Databases
 
 
 
-\## Planned Enhancements
+## Planned Enhancements
 
 
 
-1\. Introduce SQLite database
+1. Introduce SQLite database
 
-2\. Convert dictionaries into relational tables
+2. Convert dictionaries into relational tables
 
-3\. Implement save/load functionality
+3. Implement save/load functionality
 
-4\. Add input sanitization
+4. Add input sanitization
 
-5\. Separate data access from game logic
+5. Separate data access from game logic
 
-6\. Improve documentation
+6. Improve documentation
 
 
 
-\## Expected Outcome
+## Expected Outcome
 
 
 
