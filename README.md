@@ -86,7 +86,9 @@ For **CS‑499**, the project was enhanced to demonstrate database integration a
 
 
 
-- `main` branch: database-enhanced version
+- `main` branch: both branches and documentation
+
+- `enhanced-release` branch: database-enhanced version
 
 - `original-release` branch: original IT‑140 version
 
